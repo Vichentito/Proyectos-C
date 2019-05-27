@@ -6,6 +6,7 @@ void leerEmpleados(FILE *empleadosFile, char **empleados, int tam);
 void leerNota(FILE *nota);
 void crearNotas(char **empleados, FILE *nota, int tam);
 int contarEmpleados(FILE *empleadosFile);
+void llenarNotas(char **empleados, FILE *nota, int tam);
 
 int main()
 {
@@ -16,15 +17,14 @@ int main()
 	noEmpleados = contarEmpleados(empleadosFile);
 	empleados = (char **)malloc(noEmpleados * sizeof(char *));
 	for (int i = 0; i < noEmpleados; i++)
-    {
-        empleados[i] = (char *)malloc(50 * sizeof(char));
-    }
-	printf("numero de empleados: %d\n", noEmpleados);
+	{
+		empleados[i] = (char *)malloc(50 * sizeof(char));
+	}
+	//printf("numero de empleados: %d\n", noEmpleados);
 	leerEmpleados(empleadosFile, empleados, noEmpleados);
-	printf("\n");
-	leerNota(nota);
-	printf("\n");
+	//leerNota(nota);
 	crearNotas(empleados, nota, noEmpleados);
+	llenarNotas(empleados, nota, noEmpleados);
 	return 0;
 }
 
@@ -68,9 +68,8 @@ void leerEmpleados(FILE *empleadosFile, char **empleados, int tam)
 	{
 		while (!feof(empleadosFile))
 		{
-			nombre = fgets(nombres, 100, empleadosFile);
-			strcpy(empleados[i], strcat(nombre, ".txt"));
-			puts(nombres);
+			nombre = strtok(fgets(nombres, 100, empleadosFile), "\n");
+			strcpy(empleados[i], nombre);
 			i++;
 		}
 	}
@@ -97,12 +96,65 @@ void leerNota(FILE *nota)
 	fclose(nota);
 }
 
-void crearNotas(char **empleados, FILE *nota, int noEmpleados){
+void crearNotas(char **empleados, FILE *nota, int noEmpleados)
+{
 	int tam = noEmpleados, i = 0;
+	char caracter, charname;
 	nota = fopen("nota.txt", "r");
-	for ( i=0 ; i < tam; i++)
+	for (i = 0; i < tam; i++)
 	{
-		FILE *notaFinal = fopen(empleados[i], "wt");
+		char tempname[65];
+		strcpy(tempname, empleados[i]);
+		FILE *notaFinal = fopen(strcat(tempname, ".txt"), "wt");
+		fclose(notaFinal);
 	}
-	
+}
+
+void llenarNotas(char **empleados, FILE *nota, int tam)
+{
+
+	int i;
+	char caracter;
+
+	for (i = 0; i < tam; i++)
+	{
+		char tempname[65];
+		strcpy(tempname, empleados[i]);
+		FILE *notaToEmpl = fopen(strcat(tempname, ".txt"), "a");
+		nota = fopen("nota.txt", "rt");
+		if (nota == NULL)
+		{
+			printf("\nError de apertura del archivo. \n\n");
+		}
+		else
+		{
+			if (notaToEmpl == NULL)
+			{
+				printf("\nError de apertura del archivo. \n\n");
+			}
+			else
+			{
+				while (!feof(nota))
+				{
+					caracter = fgetc(nota);
+					if (caracter != EOF)
+					{
+						if (caracter == '-')
+						{
+							for (int j = 0; j < strlen(empleados[i]); j++)
+							{
+								char tempchar = empleados[i][j];
+								fputc(tempchar, notaToEmpl);	
+							}
+						}else
+						{
+							fputc(caracter, notaToEmpl);
+						}
+					}
+				}
+				fclose(notaToEmpl);
+			}
+			fclose(nota);
+		}
+	}
 }
