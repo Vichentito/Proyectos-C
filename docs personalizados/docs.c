@@ -14,6 +14,12 @@ int main()
 	FILE *nota;
 	char **empleados;
 	int noEmpleados;
+	printf("El programa tomara el mensaje dentro del archivo nota.txt y\n");
+	printf("lo copiará, personalizandolo para cada uno de los empleados\n");
+	printf("que se encuentren dentro del archivo empleados.txt\n");
+	printf("Para que la personalizacion se lleve a cabo se debera colocar\n");
+	printf("un guión medio (-) donde se desee que se coloque el nombre del empleado\n");
+	printf("Los archivos empleados.txt y nota.txt deben de ser ya existentes al inicio del programa.\n");
 	noEmpleados = contarEmpleados(empleadosFile);
 	empleados = (char **)malloc(noEmpleados * sizeof(char *));
 	for (int i = 0; i < noEmpleados; i++)
@@ -25,6 +31,7 @@ int main()
 	//leerNota(nota);
 	crearNotas(empleados, nota, noEmpleados);
 	llenarNotas(empleados, nota, noEmpleados);
+	printf("Notas personalizadas finalizadas\n");
 	return 0;
 }
 
